@@ -53,7 +53,7 @@ impl Default for Config {
         Self {
             name: "Terminal".into(),
             terminal: "gnome-terminal".into(),
-            args: vec!["$DIR$".into()]
+            args: vec!["{DIR}".into()]
         }
 
     }

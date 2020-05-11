@@ -7,14 +7,9 @@ use nautilus_extension::{
 };
 use gtk_sys::GtkWidget;
 use std::{path::PathBuf};
-use super::{utils, config::Config};
+use super::{utils, CONFIG, open_terminal::open_terminal};
 use gobject_sys::GObject;
 use glib_sys::gpointer;
-use lazy_static::lazy_static;
-
-lazy_static! {
-    static ref CONFIG: Config = Config::load();
-}
 
 pub struct CustomTerminalMenuProvider;
 
@@ -52,9 +47,7 @@ impl MenuProvider for CustomTerminalMenuProvider {
 
     }
 
-    fn get_background_items(&self, _window: *mut GtkWidget, current_folder: &FileInfo) -> Vec<MenuItem> {
-
-        println!("{}", current_folder.get_uri());
+    fn get_background_items(&self, _window: *mut GtkWidget, _current_folder: &FileInfo) -> Vec<MenuItem> {
 
         let mut menu_items = Vec::<MenuItem>::new();
 
@@ -79,12 +72,18 @@ nautilus_menu_background_activate_cb!(open_background_clickded_cb, open_backgrou
 
 fn open_folder_clicked(files: Vec<FileInfo>) {
 
-    println!("{}", files[0].get_uri())
+    if files.len() == 1 {
+
+        let path = utils::fix_filename(files[0].get_uri());
+        open_terminal(path);
+
+    }
 
 }
 
 fn open_background_clicked(path: FileInfo) {
 
-    eprintln!("{}", path.get_uri())
+    let path = utils::fix_filename(path.get_uri());
+    open_terminal(path);
 
 }
